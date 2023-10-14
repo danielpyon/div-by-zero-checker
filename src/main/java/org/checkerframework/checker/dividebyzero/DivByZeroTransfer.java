@@ -149,7 +149,7 @@ public class DivByZeroTransfer extends CFTransfer {
                 return lhs;
             if (equal(lhs, top()) || equal(rhs, top()))
                 return top();
-            if (equal(lhs, bottom())
+            if (equal(lhs, bottom()))
                 return top();
 
             if (equal(lhs, rhs))
