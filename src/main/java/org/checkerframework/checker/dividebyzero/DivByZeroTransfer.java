@@ -96,30 +96,69 @@ public class DivByZeroTransfer extends CFTransfer {
 
         switch (operator) {
         case PLUS:
-            // PLUS(+,-)=T, PLUS(-,+)=T
-            // PLUS(+,+)=+, PLUS(-,-)=-
-            // PLUS(T,x)=T, PLUS(x,T)=T
-            // PLUS(B,x)=T, PLUS(x,B)=T
-
-            // If any of the estimates are top, return top
             if (equal(lhs, top()) || equal(rhs, top()))
                 return top();
             if (equal(lhs, bottom()) || equal(rhs, bottom()))
                 return top();
+            if (equal(lhs, reflect(Zero.class)))
+                return rhs;
+            if (equal(rhs, reflect(Zero.class)))
+                return lhs;
             if (!equal(lhs, rhs))
                 return top();
             if (equal(lhs, reflect(Positive.class)))
                 return reflect(Positive.class);
             if (equal(lhs, reflect(Negative.class)))
                 return reflect(Negative.class);
-            break;
+            return top();
         case MINUS:
-            break;
+            if (equal(lhs, top()) || equal(rhs, top()))
+                return top();
+            if (equal(lhs, bottom()) || equal(rhs, bottom()))
+                return top();
+            if (equal(rhs, reflect(Zero.class)))
+                return lhs;
+            if (equal(lhs, reflect(Zero.class))) {
+                if (equal(rhs, reflect(Positive.class)))
+                    return reflect(Negative.class);
+                else
+                    return reflect(Positive.class);
+            }
+
+            if (equal(lhs, reflect(Negative.class)) && equal(rhs, reflect(Positive.class)))
+                return reflect(Negative.class);
+            if (equal(lhs, reflect(Positive.class)) && equal(rhs, reflect(Negative.class)))
+                return reflect(Positive.class);
+            return top();
         case TIMES:
-            break;
+            if (equal(lhs, top()) || equal(rhs, top()))
+                return top();
+            if (equal(lhs, bottom()) || equal(rhs, bottom()))
+                return top();
+            if (equal(lhs, reflect(Zero.class)) || equal(rhs, reflect(Zero.class)))
+                return reflect(Zero.class);
+
+            if (!equal(lhs, rhs))
+                return reflect(Negative.class);
+            else
+                return reflect(Positive.class);
         case DIVIDE:
-            break;
+            if (equal(rhs, bottom()))
+                return bottom();
+            if (equal(lhs, reflect(Zero.class)))
+                return lhs;
+            if (equal(lhs, top()) || equal(rhs, top()))
+                return top();
+            if (equal(lhs, bottom())
+                return top();
+
+            if (equal(lhs, rhs))
+                return reflect(Positive.class);
+            return reflect(Negative.class);
         case MOD:
+            if (equal(rhs, bottom()))
+                return bottom();
+            // TODO: implement this
             break;
         }
         return top();
