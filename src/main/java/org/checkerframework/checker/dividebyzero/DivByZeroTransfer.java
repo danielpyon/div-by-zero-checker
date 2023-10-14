@@ -93,7 +93,35 @@ public class DivByZeroTransfer extends CFTransfer {
             BinaryOperator operator,
             AnnotationMirror lhs,
             AnnotationMirror rhs) {
-        // TODO
+
+        switch (operator) {
+        case PLUS:
+            // PLUS(+,-)=T, PLUS(-,+)=T
+            // PLUS(+,+)=+, PLUS(-,-)=-
+            // PLUS(T,x)=T, PLUS(x,T)=T
+            // PLUS(B,x)=T, PLUS(x,B)=T
+
+            // If any of the estimates are top, return top
+            if (equal(lhs, top()) || equal(rhs, top()))
+                return top();
+            if (equal(lhs, bottom()) || equal(rhs, bottom()))
+                return top();
+            if (!equal(lhs, rhs))
+                return top();
+            if (equal(lhs, reflect(Positive.class)))
+                return reflect(Positive.class);
+            if (equal(lhs, reflect(Negative.class)))
+                return reflect(Negative.class);
+            break;
+        case MINUS:
+            break;
+        case TIMES:
+            break;
+        case DIVIDE:
+            break;
+        case MOD:
+            break;
+        }
         return top();
     }
 

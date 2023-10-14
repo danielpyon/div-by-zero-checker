@@ -1,6 +1,7 @@
 # Generated files
 .gradle
 build
+bin
 
 # IntelliJ
 .idea
