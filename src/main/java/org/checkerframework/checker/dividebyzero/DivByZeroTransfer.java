@@ -71,7 +71,30 @@ public class DivByZeroTransfer extends CFTransfer {
             Comparison operator,
             AnnotationMirror lhs,
             AnnotationMirror rhs) {
-        // TODO
+        switch (operator) {
+        case EQ:
+            return glb(lhs, rhs);
+        case NE:
+            if (equal(rhs, reflect(Negative.class)))
+                return glb(lhs, reflect(Positive.class));
+            if (equal(rhs, reflect(Positive.class)))
+                return glb(lhs, reflect(Negative.class));
+            return glb(lhs, reflect(Bottom.class));
+        case LT:
+            if (equal(rhs, reflect(Zero.class)))
+                return glb(lhs, reflect(Negative.class));
+        case LE:
+            if (equal(rhs, reflect(Negative.class)))
+                return glb(lhs, reflect(Negative.class));
+            return lhs;
+        case GT:
+            if (equal(rhs, reflect(Zero.class)))
+                return glb(lhs, reflect(Positive.class));
+        case GE:
+            if (equal(rhs, reflect(Positive.class)))
+                return glb(lhs, reflect(Positive.class));
+            return lhs;
+        }
         return lhs;
     }
 
