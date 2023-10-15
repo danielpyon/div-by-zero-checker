@@ -94,72 +94,66 @@ public class DivByZeroTransfer extends CFTransfer {
             AnnotationMirror lhs,
             AnnotationMirror rhs) {
 
+        if (equal(lhs, bottom()) || equal(rhs, bottom()))
+                return bottom();
+
         switch (operator) {
         case PLUS:
             if (equal(lhs, top()) || equal(rhs, top()))
-                return top();
-            if (equal(lhs, bottom()) || equal(rhs, bottom()))
                 return top();
             if (equal(lhs, reflect(Zero.class)))
                 return rhs;
             if (equal(rhs, reflect(Zero.class)))
                 return lhs;
-            if (!equal(lhs, rhs))
-                return top();
-            if (equal(lhs, reflect(Positive.class)))
-                return reflect(Positive.class);
-            if (equal(lhs, reflect(Negative.class)))
-                return reflect(Negative.class);
+            if (equal(lhs, rhs))
+                return lhs;
             return top();
         case MINUS:
             if (equal(lhs, top()) || equal(rhs, top()))
                 return top();
-            if (equal(lhs, bottom()) || equal(rhs, bottom()))
-                return top();
-            if (equal(rhs, reflect(Zero.class)))
-                return lhs;
-            if (equal(lhs, reflect(Zero.class))) {
-                if (equal(rhs, reflect(Positive.class)))
-                    return reflect(Negative.class);
-                else
-                    return reflect(Positive.class);
+
+            if (equal(lhs, reflect(Negative.class))) {
+                if (equal(rhs, reflect(Negative.class)))
+                    return top();
+                return reflect(Negative.class);
             }
 
-            if (equal(lhs, reflect(Negative.class)) && equal(rhs, reflect(Positive.class)))
-                return reflect(Negative.class);
-            if (equal(lhs, reflect(Positive.class)) && equal(rhs, reflect(Negative.class)))
+            if (equal(lhs, reflect(Zero.class))) {
+                if (equal(rhs, reflect(Zero.class)))
+                    return reflect(Zero.class);
+                // Flip the sign
+                return equal(rhs, reflect(Positive.class)) ?
+                    reflect(Negative.class) :
+                    reflect(Positive.class);
+            }
+
+            if (equal(lhs, reflect(Positive.class))) {
+                if (equal(rhs, reflect(Positive.class)))
+                    return top();
                 return reflect(Positive.class);
+            }
+
             return top();
         case TIMES:
-            if (equal(lhs, top()) || equal(rhs, top()))
-                return top();
-            if (equal(lhs, bottom()) || equal(rhs, bottom()))
-                return top();
             if (equal(lhs, reflect(Zero.class)) || equal(rhs, reflect(Zero.class)))
                 return reflect(Zero.class);
-
-            if (!equal(lhs, rhs))
-                return reflect(Negative.class);
-            else
-                return reflect(Positive.class);
-        case DIVIDE:
-            if (equal(rhs, bottom()))
-                return bottom();
-            if (equal(lhs, reflect(Zero.class)))
-                return lhs;
             if (equal(lhs, top()) || equal(rhs, top()))
-                return top();
-            if (equal(lhs, bottom()))
                 return top();
 
             if (equal(lhs, rhs))
                 return reflect(Positive.class);
-            return reflect(Negative.class);
+            else
+                return reflect(Negative.class);
         case MOD:
-            if (equal(rhs, bottom()))
+        case DIVIDE:
+            if (equal(rhs, reflect(Zero.class)))
                 return bottom();
-            // TODO: implement this
-            break;
+            if (equal(lhs, top()) || equal(rhs, top()))
+                return top();
+
+            if (equal(lhs, reflect(Zero.class)))
+                return reflect(Zero.class);
+            return top();
         }
         return top();
     }

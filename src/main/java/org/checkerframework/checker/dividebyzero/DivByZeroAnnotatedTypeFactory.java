@@ -33,9 +33,9 @@ public class DivByZeroAnnotatedTypeFactory extends BaseAnnotatedTypeFactory {
             if (intValue == 0)
                 return Zero.class;
             else if (intValue < 0)
-                return Positive.class;
-            else
                 return Negative.class;
+            else
+                return Positive.class;
         case LONG_LITERAL:
             long longValue = (Long)literal.getValue();
             if (longValue == 0)
